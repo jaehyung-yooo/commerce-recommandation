@@ -1,0 +1,185 @@
+version: '3.8'
+
+services:
+  # OpenSearch 클러스터
+  opensearch:
+    image: opensearchproject/opensearch:2.11.0
+    container_name: opensearch
+    environment:
+      - cluster.name=opensearch-cluster
+      - node.name=opensearch-node1
+      - discovery.type=single-node
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+      - DISABLE_SECURITY_PLUGIN=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+    ports:
+      - "9200:9200"
+      - "9600:9600"
+    volumes:
+      - opensearch_data:/usr/share/opensearch/data
+    networks:
+      - commerce-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:9200 || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # OpenSearch Dashboards
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.0
+    container_name: opensearch-dashboards
+    ports:
+      - "5601:5601"
+    expose:
+      - "5601"
+    environment:
+      - OPENSEARCH_HOSTS=["http://opensearch:9200"]
+      - DISABLE_SECURITY_DASHBOARDS_PLUGIN=true
+    depends_on:
+      - opensearch
+    networks:
+      - commerce-network
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+    networks:
+      - commerce-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # MySQL 데이터베이스
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=commerce_recommendation
+      - MYSQL_USER=commerce_user
+      - MYSQL_PASSWORD=commerce_password
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - commerce-network
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Backend API 서비스
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MYSQL_SERVER=mysql
+      - MYSQL_USER=commerce_user
+      - MYSQL_PASSWORD=commerce_password
+      - MYSQL_DB=commerce_recommendation
+      - MYSQL_PORT=3306
+      - OPENSEARCH_HOST=opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_USERNAME=admin
+      - OPENSEARCH_PASSWORD=admin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - RECOMMENDATION_ENGINE_HOST=recommendation-engine
+      - RECOMMENDATION_ENGINE_PORT=8001
+      - ENVIRONMENT=production
+    depends_on:
+      - mysql
+      - redis
+      - opensearch
+    networks:
+      - commerce-network
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # Recommendation Engine 서비스
+  recommendation-engine:
+    build:
+      context: ./recommendation-engine
+      dockerfile: Dockerfile
+    container_name: recommendation-engine
+    ports:
+      - "8001:8001"
+    environment:
+      - OPENSEARCH_HOST=opensearch
+      - OPENSEARCH_PORT=9200
+      - OPENSEARCH_USERNAME=admin
+      - OPENSEARCH_PASSWORD=admin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - ENVIRONMENT=production
+    depends_on:
+      - opensearch
+      - redis
+    networks:
+      - commerce-network
+    volumes:
+      - ./recommendation-engine:/app
+      - recommendation_models:/app/models
+    command: uvicorn src.main:app --host 0.0.0.0 --port 8001 --reload
+
+  # Frontend 서비스
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8000
+      - REACT_APP_RECOMMENDATION_ENGINE_URL=http://localhost:8001
+    depends_on:
+      - backend
+    networks:
+      - commerce-network
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    command: npm run dev
+
+  # Nginx 리버스 프록시
+  nginx:
+    image: nginx:alpine
+    container_name: nginx
+    ports:
+      - "80:80"
+    volumes:
+      - ./config/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - frontend
+      - backend
+      - recommendation-engine
+    networks:
+      - commerce-network
+
+volumes:
+  opensearch_data:
+  redis_data:
+  mysql_data:
+  recommendation_models:
+
+networks:
+  commerce-network:
+    driver: bridge 

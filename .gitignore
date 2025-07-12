@@ -1,0 +1,254 @@
+# ===============================================
+# Commerce Recommendation System .gitignore
+# ===============================================
+
+# ===== Node.js / Frontend =====
+# Dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Build outputs
+dist/
+dist-ssr/
+build/
+.next/
+out/
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Cache directories
+.vite/
+.cache/
+.parcel-cache/
+.npm/
+.yarn/
+.pnpm-store/
+
+# Editor directories and files
+.vscode/
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+*~
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# ===== Python / Backend =====
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+.venv/
+.env/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# PyCharm
+.idea/
+
+# ===== Machine Learning =====
+# Model files
+*.pkl
+*.pickle
+*.joblib
+*.h5
+*.hdf5
+*.pb
+*.pth
+*.pt
+*.onnx
+*.tflite
+*.model
+models/
+checkpoints/
+experiments/
+outputs/
+logs/
+tensorboard_logs/
+mlruns/
+
+# Datasets (add specific patterns as needed)
+data/raw/
+data/processed/
+*.csv
+*.json
+*.parquet
+*.feather
+
+# ===== Docker =====
+# Docker build context
+.dockerignore
+
+# ===== Database =====
+# SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# PostgreSQL
+*.dump
+
+# MySQL
+*.sql
+
+# ===== Logs =====
+*.log
+logs/
+log/
+
+# ===== Secrets & Configuration =====
+# Environment files
+.env*
+!.env.example
+secrets.json
+config.json
+settings.json
+
+# API Keys
+*key*
+*secret*
+*token*
+*credential*
+
+# SSL Certificates
+*.pem
+*.key
+*.crt
+*.cert
+
+# ===== IDEs =====
+# VS Code
+.vscode/
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+
+# JetBrains
+.idea/
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-*
+
+# ===== Temporary Files =====
+# Temporary directories
+tmp/
+temp/
+.tmp/
+.temp/
+
+# Backup files
+*.bak
+*.backup
+*.old
+
+# ===== Application Specific =====
+# Redis dumps
+dump.rdb
+
+# OpenSearch/Elasticsearch
+data/
+elasticsearch/
+
+# FastAPI
+.pytest_cache/
+
+# React/Vite specific
+.eslintcache
+
+# ===== Custom Project Files =====
+# Development utilities
+dev-utils/
+scripts/local/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Coverage reports
+coverage/
+.nyc_output/
+
+# ===== Keep These Files =====
+# Keep example files
+!*.example
+!example.*
+!sample.*
+!template.* 
