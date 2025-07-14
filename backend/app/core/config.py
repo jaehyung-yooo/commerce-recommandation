@@ -14,9 +14,17 @@ class Settings(BaseSettings):
     MYSQL_DB: str = os.getenv("MYSQL_DB", "commerce_recommendation")
     MYSQL_PORT: str = os.getenv("MYSQL_PORT", "3306")
     
+    # 환경 설정
+    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
+    
     @property
     def DATABASE_URL(self) -> str:
-        return f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_SERVER}:{self.MYSQL_PORT}/{self.MYSQL_DB}"
+        if self.ENVIRONMENT == "development":
+            # 개발 환경에서는 SQLite 사용
+            return "sqlite:///./commerce_recommendation.db"
+        else:
+            # 운영 환경에서는 MySQL 사용
+            return f"mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASSWORD}@{self.MYSQL_SERVER}:{self.MYSQL_PORT}/{self.MYSQL_DB}"
     
     # OpenSearch 설정
     OPENSEARCH_HOST: str = os.getenv("OPENSEARCH_HOST", "localhost")
@@ -33,7 +41,7 @@ class Settings(BaseSettings):
     REDIS_DB: int = int(os.getenv("REDIS_DB", "0"))
     
     # JWT 설정
-    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here")
+    SECRET_KEY: str = os.getenv("SECRET_KEY", "your-secret-key-here-change-in-production")
     ALGORITHM: str = "HS256"
     ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
     
@@ -43,6 +51,7 @@ class Settings(BaseSettings):
         "http://localhost:3001",
         "http://localhost:8080",
         "http://localhost:8000",
+        "http://localhost:5173",  # Vite 개발 서버
     ]
     
     # 추천 엔진 설정
@@ -55,9 +64,6 @@ class Settings(BaseSettings):
     
     # 로깅 설정
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
-    
-    # 환경 설정
-    ENVIRONMENT: str = os.getenv("ENVIRONMENT", "development")
     
     class Config:
         env_file = ".env"
