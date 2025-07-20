@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react'
-import { Star, TrendingUp, Users, ShoppingCart, ArrowRight, Heart, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Star, TrendingUp, Users, Eye, ArrowRight, Heart, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Link } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 
 interface Product {
@@ -13,6 +14,8 @@ interface Product {
   brand: string
   discount?: number
   reviewCount: number
+  likes: number
+  isLiked: boolean
 }
 
 function HomePage() {
@@ -42,7 +45,9 @@ function HomePage() {
           description: '최신 A17 Pro 칩셋이 탑재된 프리미엄 스마트폰',
           brand: 'Apple',
           discount: 10,
-          reviewCount: 324
+          reviewCount: 324,
+          likes: 120,
+          isLiked: false
         },
         {
           id: '2',
@@ -53,7 +58,9 @@ function HomePage() {
           category: 'electronics',
           description: '13인치 MacBook Air with M3 칩',
           brand: 'Apple',
-          reviewCount: 156
+          reviewCount: 156,
+          likes: 80,
+          isLiked: false
         },
         {
           id: '3',
@@ -64,7 +71,9 @@ function HomePage() {
           category: 'electronics',
           description: '능동형 소음 차단 기능이 있는 무선 이어폰',
           brand: 'Apple',
-          reviewCount: 89
+          reviewCount: 89,
+          likes: 50,
+          isLiked: false
         },
         {
           id: '4',
@@ -75,7 +84,9 @@ function HomePage() {
           category: 'electronics',
           description: '프로페셔널을 위한 최고의 태블릿',
           brand: 'Apple',
-          reviewCount: 276
+          reviewCount: 276,
+          likes: 180,
+          isLiked: false
         },
         {
           id: '5',
@@ -86,7 +97,9 @@ function HomePage() {
           category: 'electronics',
           description: '건강과 피트니스의 완벽한 파트너',
           brand: 'Apple',
-          reviewCount: 189
+          reviewCount: 189,
+          likes: 100,
+          isLiked: false
         },
         {
           id: '6',
@@ -97,7 +110,9 @@ function HomePage() {
           category: 'electronics',
           description: '최고급 오버이어 헤드폰',
           brand: 'Apple',
-          reviewCount: 134
+          reviewCount: 134,
+          likes: 70,
+          isLiked: false
         },
         {
           id: '7',
@@ -108,7 +123,9 @@ function HomePage() {
           category: 'electronics',
           description: '전문가를 위한 데스크톱 컴퓨터',
           brand: 'Apple',
-          reviewCount: 87
+          reviewCount: 87,
+          likes: 90,
+          isLiked: false
         },
         {
           id: '8',
@@ -119,7 +136,9 @@ function HomePage() {
           category: 'electronics',
           description: '27인치 5K 레티나 디스플레이',
           brand: 'Apple',
-          reviewCount: 156
+          reviewCount: 156,
+          likes: 110,
+          isLiked: false
         }
       ]
 
@@ -134,7 +153,9 @@ function HomePage() {
            description: 'AI 기반 스마트폰의 새로운 표준',
            brand: 'Samsung',
            discount: 15,
-           reviewCount: 1203
+           reviewCount: 1203,
+           likes: 200,
+           isLiked: false
          },
          {
            id: '10',
@@ -145,7 +166,9 @@ function HomePage() {
            category: 'electronics',
            description: '업계 최고의 노이즈 캔슬링 헤드폰',
            brand: 'Sony',
-           reviewCount: 2234
+           reviewCount: 2234,
+           likes: 150,
+           isLiked: false
          },
          {
            id: '11',
@@ -156,7 +179,9 @@ function HomePage() {
            category: 'gaming',
            description: '7인치 OLED 스크린의 휴대용 게임 콘솔',
            brand: 'Nintendo',
-           reviewCount: 1445
+           reviewCount: 1445,
+           likes: 100,
+           isLiked: false
          },
          {
            id: '12',
@@ -168,7 +193,9 @@ function HomePage() {
            description: '완벽한 블랙과 무한 명암비',
            brand: 'LG',
            discount: 20,
-           reviewCount: 876
+           reviewCount: 876,
+           likes: 120,
+           isLiked: false
          },
          {
            id: '13',
@@ -179,7 +206,9 @@ function HomePage() {
            category: 'electronics',
            description: '프로페셔널 드론 촬영',
            brand: 'DJI',
-           reviewCount: 567
+           reviewCount: 567,
+           likes: 80,
+           isLiked: false
          },
          {
            id: '14',
@@ -190,7 +219,9 @@ function HomePage() {
            category: 'home',
            description: '레이저로 먼지를 감지하는 무선 청소기',
            brand: 'Dyson',
-           reviewCount: 1234
+           reviewCount: 1234,
+           likes: 110,
+           isLiked: false
          },
          {
            id: '21',
@@ -201,7 +232,9 @@ function HomePage() {
            category: 'gaming',
            description: '차세대 게임 콘솔',
            brand: 'Sony',
-           reviewCount: 2567
+           reviewCount: 2567,
+           likes: 200,
+           isLiked: false
          },
          {
            id: '22',
@@ -212,7 +245,9 @@ function HomePage() {
            category: 'gaming',
            description: '4K 게이밍의 완성',
            brand: 'Microsoft',
-           reviewCount: 1890
+           reviewCount: 1890,
+           likes: 150,
+           isLiked: false
          },
          {
            id: '23',
@@ -223,7 +258,9 @@ function HomePage() {
            category: 'electronics',
            description: '최고의 스트리밍 경험',
            brand: 'Apple',
-           reviewCount: 756
+           reviewCount: 756,
+           likes: 100,
+           isLiked: false
          },
          {
            id: '24',
@@ -235,7 +272,9 @@ function HomePage() {
            description: '프리미엄 무선 이어폰',
            brand: 'Samsung',
            discount: 10,
-           reviewCount: 1456
+           reviewCount: 1456,
+           likes: 120,
+           isLiked: false
          },
          {
            id: '25',
@@ -246,7 +285,9 @@ function HomePage() {
            category: 'electronics',
            description: 'AI 사진 촬영의 새로운 기준',
            brand: 'Google',
-           reviewCount: 987
+           reviewCount: 987,
+           likes: 90,
+           isLiked: false
          },
          {
            id: '26',
@@ -257,7 +298,9 @@ function HomePage() {
            category: 'electronics',
            description: '차세대 VR 헤드셋',
            brand: 'Meta',
-           reviewCount: 834
+           reviewCount: 834,
+           likes: 110,
+           isLiked: false
          }
        ]
 
@@ -271,7 +314,9 @@ function HomePage() {
            category: 'electronics',
            description: '편안한 착용감의 노이즈 캔슬링 헤드폰',
            brand: 'Bose',
-           reviewCount: 889
+           reviewCount: 889,
+           likes: 80,
+           isLiked: false
          },
          {
            id: '16',
@@ -282,7 +327,9 @@ function HomePage() {
            category: 'electronics',
            description: '2-in-1 노트북과 태블릿',
            brand: 'Microsoft',
-           reviewCount: 456
+           reviewCount: 456,
+           likes: 60,
+           isLiked: false
          },
          {
            id: '17',
@@ -293,7 +340,9 @@ function HomePage() {
            category: 'electronics',
            description: '전문가용 미러리스 카메라',
            brand: 'Canon',
-           reviewCount: 234
+           reviewCount: 234,
+           likes: 70,
+           isLiked: false
          },
          {
            id: '18',
@@ -304,7 +353,9 @@ function HomePage() {
            category: 'automotive',
            description: '전기차의 새로운 표준',
            brand: 'Tesla',
-           reviewCount: 1567
+           reviewCount: 1567,
+           likes: 200,
+           isLiked: false
          },
          {
            id: '19',
@@ -315,7 +366,9 @@ function HomePage() {
            category: 'luxury',
            description: '시계의 전설, 영원한 클래식',
            brand: 'Rolex',
-           reviewCount: 89
+           reviewCount: 89,
+           likes: 90,
+           isLiked: false
          },
          {
            id: '20',
@@ -326,7 +379,9 @@ function HomePage() {
            category: 'furniture',
            description: '인체공학적 프리미엄 오피스 체어',
            brand: 'Herman Miller',
-           reviewCount: 445
+           reviewCount: 445,
+           likes: 100,
+           isLiked: false
          },
          {
            id: '27',
@@ -337,7 +392,9 @@ function HomePage() {
            category: 'electronics',
            description: '럭셔리 노이즈 캔슬링 헤드폰',
            brand: 'Bang & Olufsen',
-           reviewCount: 167
+           reviewCount: 167,
+           likes: 80,
+           isLiked: false
          },
          {
            id: '28',
@@ -348,7 +405,9 @@ function HomePage() {
            category: 'electronics',
            description: '독일 명품 컴팩트 카메라',
            brand: 'Leica',
-           reviewCount: 123
+           reviewCount: 123,
+           likes: 70,
+           isLiked: false
          },
          {
            id: '29',
@@ -359,7 +418,9 @@ function HomePage() {
            category: 'automotive',
            description: '스포츠카의 전기차 혁명',
            brand: 'Porsche',
-           reviewCount: 456
+           reviewCount: 456,
+           likes: 150,
+           isLiked: false
          },
          {
            id: '30',
@@ -370,7 +431,9 @@ function HomePage() {
            category: 'luxury',
            description: '최고급 스위스 시계',
            brand: 'Patek Philippe',
-           reviewCount: 34
+           reviewCount: 34,
+           likes: 100,
+           isLiked: false
          },
          {
            id: '31',
@@ -381,7 +444,9 @@ function HomePage() {
            category: 'furniture',
            description: '20세기 디자인의 걸작',
            brand: 'Herman Miller',
-           reviewCount: 234
+           reviewCount: 234,
+           likes: 90,
+           isLiked: false
          },
          {
            id: '32',
@@ -392,7 +457,9 @@ function HomePage() {
            category: 'luxury',
            description: '명품 가방의 최고봉',
            brand: 'Hermès',
-           reviewCount: 78
+           reviewCount: 78,
+           likes: 110,
+           isLiked: false
          },
          {
            id: '33',
@@ -403,7 +470,9 @@ function HomePage() {
            category: 'electronics',
            description: '프리미엄 사운드바',
            brand: 'Sonos',
-           reviewCount: 1234
+           reviewCount: 1234,
+           likes: 100,
+           isLiked: false
          },
          {
            id: '34',
@@ -414,7 +483,9 @@ function HomePage() {
            category: 'beauty',
            description: '혁신적인 헤어 스타일링 도구',
            brand: 'Dyson',
-           reviewCount: 2345
+           reviewCount: 2345,
+           likes: 120,
+           isLiked: false
          }
        ]
       
@@ -449,38 +520,42 @@ function HomePage() {
     }).format(price)
   }
 
+  const handleLikeToggle = (productId: string) => {
+    setAllProducts(prevProducts => {
+      const updatedProducts = { ...prevProducts }
+      Object.keys(updatedProducts).forEach(key => {
+        updatedProducts[key] = updatedProducts[key].map(product => 
+          product.id === productId 
+            ? { ...product, isLiked: !product.isLiked, likes: product.isLiked ? product.likes - 1 : product.likes + 1 }
+            : product
+        )
+      })
+      return updatedProducts
+    })
+  }
+
   const ProductCard = ({ product }: { product: Product }) => {
     return (
-      <div className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden group">
-        <div className="relative overflow-hidden">
-          <img 
-            src={product.image} 
-            alt={product.name}
-            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-200"
-          />
-          {product.discount && (
-            <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-medium">
-              {product.discount}% OFF
-            </div>
-          )}
-          <button className="absolute top-2 right-2 p-2 bg-white rounded-full shadow-md hover:bg-gray-50 transition-colors">
-            <Heart className="h-4 w-4 text-gray-600 hover:text-red-500" />
-          </button>
-        </div>
-        
-        <div className="p-4">
-          <div className="flex items-center justify-between mb-2">
-            <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">
+      <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group">
+        <Link to={`/products/${product.id}`} className="block">
+          <div className="relative overflow-hidden">
+            <img 
+              src={product.image} 
+              alt={product.name}
+              className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+            />
+            <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-medium text-gray-600">
               {product.brand}
-            </span>
-            <div className="flex items-center">
-              <Star className="h-4 w-4 text-yellow-400 fill-current" />
-              <span className="text-sm text-gray-600 ml-1">
-                {product.rating} ({product.reviewCount})
+            </div>
+            <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+              <span className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                클릭해서 상세보기
               </span>
             </div>
           </div>
-          
+        </Link>
+        
+        <div className="p-4">
           <h3 className="font-semibold text-gray-900 mb-1 line-clamp-2">
             {product.name}
           </h3>
@@ -489,21 +564,45 @@ function HomePage() {
             {product.description}
           </p>
           
-          <div className="flex items-center justify-between">
-            <div className="flex flex-col">
-              {product.discount && (
-                <span className="text-sm text-gray-500 line-through">
-                  {formatPrice(product.price)}
-                </span>
-              )}
-              <span className="text-lg font-bold text-primary-600">
-                {formatPrice(product.discount ? product.price * (1 - product.discount / 100) : product.price)}
-              </span>
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-lg font-bold text-primary-600">
+              ₩{product.price.toLocaleString()}
+            </span>
+            <div className="flex items-center">
+              <Star className="h-4 w-4 text-yellow-400 fill-current" />
+              <span className="ml-1 text-sm text-gray-600">{product.rating}</span>
             </div>
-            
-            <button className="bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors flex items-center">
-              <ShoppingCart className="h-4 w-4 mr-1" />
-              구매
+          </div>
+
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center text-sm text-gray-600">
+              <Heart className="h-4 w-4 text-red-400 mr-1" />
+              <span>{product.likes}</span>
+            </div>
+          </div>
+          
+          <div className="flex space-x-2">
+            <Link 
+              to={`/products/${product.id}`}
+              className="flex-1 bg-primary-600 text-white py-2 px-4 rounded-lg hover:bg-primary-700 transition-colors font-medium text-sm text-center flex items-center justify-center"
+            >
+              <Eye className="h-4 w-4 mr-2" />
+              상세보기
+            </Link>
+            <button 
+              onClick={(e) => {
+                e.preventDefault()
+                e.stopPropagation()
+                handleLikeToggle(product.id)
+              }}
+              className={`p-2 rounded-lg transition-colors ${
+                product.isLiked 
+                  ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+              title={product.isLiked ? '좋아요 취소' : '좋아요'}
+            >
+              <Heart className={`h-4 w-4 ${product.isLiked ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>

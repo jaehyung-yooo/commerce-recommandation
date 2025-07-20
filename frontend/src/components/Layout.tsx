@@ -1,6 +1,6 @@
 import { ReactNode, useState, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
-import { ShoppingCart, Home, Package, User, LogOut } from 'lucide-react'
+import { ShoppingCart, Home, Package, User, LogOut, Shield } from 'lucide-react'
 import { authService } from '../services/auth'
 
 interface LayoutProps {
@@ -149,6 +149,7 @@ function Layout({ children }: LayoutProps) {
   const navItems = [
     { path: '/', label: 'Home', icon: Home },
     { path: '/products', label: 'Products', icon: Package },
+    { path: '/admin', label: 'Admin', icon: Shield },
   ]
 
   return (

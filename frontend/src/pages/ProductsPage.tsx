@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Heart, Star, Eye, Filter, Grid, List, ChevronLeft, ChevronRight, Search, Layers, MessageSquare } from 'lucide-react'
+import { Heart, Star, Eye, Filter, ChevronLeft, ChevronRight, Search, Layers, MessageSquare } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import SearchBar from '../components/SearchBar'
 
@@ -23,7 +23,6 @@ function ProductsPage() {
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([])
   const [selectedCategory, setSelectedCategory] = useState('all')
   const [loading, setLoading] = useState(true)
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid')
   const [sortBy, setSortBy] = useState('name')
   const [currentPage, setCurrentPage] = useState(1)
   const [itemsPerPage] = useState(8)
@@ -125,6 +124,30 @@ function ProductsPage() {
       likes: 298,
       isLiked: false,
       brand: 'Microsoft'
+    },
+    {
+      id: '9',
+      name: 'Apple Watch Series 9',
+      price: 500000,
+      rating: 4.5,
+      image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRUM0ODk5Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIj5BcHBsZSBXYXRjaDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCI+U2VyaWVzIDk8L3RleHQ+PC9zdmc+',
+      category: 'electronics',
+      description: '건강과 피트니스의 완벽한 파트너',
+      likes: 189,
+      isLiked: false,
+      brand: 'Apple'
+    },
+    {
+      id: '10',
+      name: 'AirPods Max',
+      price: 650000,
+      rating: 4.6,
+      image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMTBCOTgxIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIj5BaXJQb2RzIE1heDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCI+7ZSE66mU7JuA66GcPC90ZXh0Pjwvc3ZnPg==',
+      category: 'electronics',
+      description: '최고급 오버이어 헤드폰',
+      likes: 134,
+      isLiked: false,
+      brand: 'Apple'
     }
   ]
 
@@ -224,12 +247,36 @@ function ProductsPage() {
       likes: 156,
       isLiked: false,
       brand: 'ASUS'
+    },
+    {
+      id: '17',
+      name: 'Tesla Model 3',
+      price: 45000000,
+      rating: 4.7,
+      image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjRUY0NDQ0Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIj5UZXNsYSBNb2RlbDwvdGV4dD48dGV4dCB4PSIxNTAiIHk9IjE3MCIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZmlsbD0id2hpdGUiIGZvbnQtc2l6ZT0iMTYiIGZvbnQtZmFtaWx5PSJBcmlhbCI+MzwvdGV4dD48L3N2Zz4=',
+      category: 'automotive',
+      description: '전기차의 새로운 표준',
+      likes: 1567,
+      isLiked: false,
+      brand: 'Tesla'
+    },
+    {
+      id: '18',
+      name: 'LG OLED C3 55"',
+      price: 1800000,
+      rating: 4.6,
+      image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjNkI3MjgwIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIj5MRyBPTEVEPC90ZXh0Pjx0ZXh0IHg9IjE1MCIgeT0iMTcwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIxNiIgZm9udC1mYW1pbHk9IkFyaWFsIj5DMyA1NSI8L3RleHQ+PC9zdmc+',
+      category: 'electronics',
+      description: '완벽한 블랙과 무한 명암비의 OLED TV',
+      likes: 876,
+      isLiked: false,
+      brand: 'LG'
     }
   ]
 
   const reviewBasedProducts: Product[] = [
     {
-      id: '17',
+      id: '31',
       name: 'Dyson V15 Detect',
       price: 850000,
       rating: 4.9,
@@ -241,7 +288,7 @@ function ProductsPage() {
       brand: 'Dyson'
     },
     {
-      id: '18',
+      id: '32',
       name: 'Instant Pot Duo 7-in-1',
       price: 220000,
       rating: 4.8,
@@ -253,7 +300,7 @@ function ProductsPage() {
       brand: 'Instant Pot'
     },
     {
-      id: '19',
+      id: '33',
       name: 'Vitamix Ascent A3500',
       price: 680000,
       rating: 4.7,
@@ -265,7 +312,7 @@ function ProductsPage() {
       brand: 'Vitamix'
     },
     {
-      id: '20',
+      id: '34',
       name: 'Nest Learning Thermostat',
       price: 320000,
       rating: 4.6,
@@ -277,7 +324,7 @@ function ProductsPage() {
       brand: 'Google'
     },
     {
-      id: '21',
+      id: '35',
       name: 'Philips Hue 스마트 전구',
       price: 85000,
       rating: 4.5,
@@ -289,7 +336,7 @@ function ProductsPage() {
       brand: 'Philips'
     },
     {
-      id: '22',
+      id: '36',
       name: 'Roomba i7+',
       price: 1200000,
       rating: 4.4,
@@ -301,7 +348,7 @@ function ProductsPage() {
       brand: 'iRobot'
     },
     {
-      id: '23',
+      id: '37',
       name: 'Breville Barista Express',
       price: 750000,
       rating: 4.7,
@@ -313,7 +360,7 @@ function ProductsPage() {
       brand: 'Breville'
     },
     {
-      id: '24',
+      id: '38',
       name: 'Herman Miller Aeron 의자',
       price: 1800000,
       rating: 4.8,
@@ -323,6 +370,30 @@ function ProductsPage() {
       likes: 156,
       isLiked: false,
       brand: 'Herman Miller'
+    },
+    {
+      id: '39',
+      name: 'Sonos Arc 사운드바',
+      price: 1000000,
+      rating: 4.7,
+      image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjMDAwMDAwIi8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIj5Tb25vcyBBcmM8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxNzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0iQXJpYWwiPu2SgOumrOuvuCDsgJzsmrTrk5zrsJQ8L3RleHQ+PC9zdmc+',
+      category: 'electronics',
+      description: '프리미엄 홈시어터 사운드바',
+      likes: 298,
+      isLiked: false,
+      brand: 'Sonos'
+    },
+    {
+      id: '40',
+      name: 'DJI Mini 4 Pro',
+      price: 900000,
+      rating: 4.8,
+      image: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzAwIiBoZWlnaHQ9IjMwMCIgdmlld0JveD0iMCAwIDMwMCAzMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIzMDAiIGhlaWdodD0iMzAwIiBmaWxsPSIjOEI1Q0Y2Ii8+Cjx0ZXh0IHg9IjE1MCIgeT0iMTQwIiB0ZXh0LWFuY2hvcj0ibWlkZGxlIiBmaWxsPSJ3aGl0ZSIgZm9udC1zaXplPSIyMCIgZm9udC1mYW1pbHk9IkFyaWFsIj5ESkkgTWluaWM8L3RleHQ+PHRleHQgeD0iMTUwIiB5PSIxNzAiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGZpbGw9IndoaXRlIiBmb250LXNpemU9IjE2IiBmb250LWZhbWlseT0iQXJpYWwiPjQgUHJvPC90ZXh0Pjwvc3ZnPg==',
+      category: 'electronics',
+      description: '프로페셔널 4K 드론 촬영',
+      likes: 567,
+      isLiked: false,
+      brand: 'DJI'
     }
   ]
 
@@ -540,42 +611,6 @@ function ProductsPage() {
                 </button>
               ))}
             </div>
-
-            {/* 정렬 및 뷰 옵션 */}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <span className="text-sm text-gray-600">정렬:</span>
-                <select
-                  value={sortBy}
-                  onChange={(e) => handleSort(e.target.value)}
-                  className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
-                >
-                  {sortOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-gray-600">보기:</span>
-                <div className="flex rounded-lg border border-gray-300 overflow-hidden">
-                  <button
-                    onClick={() => setViewMode('grid')}
-                    className={`p-2 ${viewMode === 'grid' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
-                  >
-                    <Grid className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => setViewMode('list')}
-                    className={`p-2 ${viewMode === 'list' ? 'bg-blue-600 text-white' : 'bg-white text-gray-600 hover:bg-gray-50'}`}
-                  >
-                    <List className="h-4 w-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -591,153 +626,97 @@ function ProductsPage() {
           </p>
         </div>
 
-        {viewMode === 'grid' ? (
-          <div className="grid grid-cols-4 gap-6">
-            {currentProducts.map(product => (
-              <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                <Link to={`/products/${product.id}`} className="block">
-                  <div className="aspect-square bg-gray-100 relative overflow-hidden">
-                    <img 
-                      src={product.image} 
-                      alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                    <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-medium text-gray-600">
-                      {product.brand}
-                    </div>
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
-                      <span className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                        클릭해서 상세보기
-                      </span>
-                    </div>
+        <div className="grid grid-cols-4 gap-6">
+          {currentProducts.map(product => (
+            <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group">
+              <Link to={`/products/${product.id}`} className="block">
+                <div className="aspect-square bg-gray-100 relative overflow-hidden">
+                  <img 
+                    src={product.image} 
+                    alt={product.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-2 right-2 bg-white rounded-full px-2 py-1 text-xs font-medium text-gray-600">
+                    {product.brand}
                   </div>
-                </Link>
-                
-                <div className="p-4">
-                  <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
-                  
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="text-lg font-bold text-blue-600">
-                      ₩{product.price.toLocaleString()}
+                  <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300 flex items-center justify-center">
+                    <span className="text-white font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                      클릭해서 상세보기
                     </span>
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="ml-1 text-sm text-gray-600">{product.rating}</span>
-                    </div>
                   </div>
+                </div>
+              </Link>
+              
+              <div className="p-4">
+                <h3 className="font-semibold text-gray-900 mb-1">{product.name}</h3>
+                <p className="text-sm text-gray-600 mb-3 line-clamp-2">{product.description}</p>
+                
+                <div className="flex items-center justify-between mb-3">
+                  <span className="text-lg font-bold text-blue-600">
+                    ₩{product.price.toLocaleString()}
+                  </span>
+                  <div className="flex items-center">
+                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                    <span className="ml-1 text-sm text-gray-600">{product.rating}</span>
+                  </div>
+                </div>
 
-                  <div className="flex items-center justify-between mb-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Heart className="h-4 w-4 text-red-400 mr-1" />
-                      <span>{product.likes}</span>
-                    </div>
-                  </div>
-                  
-                  <div className="flex space-x-2">
-                    <Link 
-                      to={`/products/${product.id}`}
-                      className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm text-center flex items-center justify-center"
-                    >
-                      <Eye className="h-4 w-4 mr-2" />
-                      상세보기
-                    </Link>
-                    <button 
-                      onClick={(e) => {
-                        e.preventDefault()
-                        e.stopPropagation()
-                        handleLikeToggle(product.id)
-                      }}
-                      className={`p-2 rounded-lg transition-colors ${
-                        product.isLiked 
-                          ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                          : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      }`}
-                      title={product.isLiked ? '좋아요 취소' : '좋아요'}
-                    >
-                      <Heart className={`h-4 w-4 ${product.isLiked ? 'fill-current' : ''}`} />
-                    </button>
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Heart className="h-4 w-4 text-red-400 mr-1" />
+                    <span>{product.likes}</span>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="space-y-4">
-            {currentProducts.map(product => (
-              <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group">
-                <div className="flex">
-                  <Link to={`/products/${product.id}`} className="block">
-                    <div className="w-48 h-32 bg-gray-100 relative overflow-hidden">
-                      <img 
-                        src={product.image} 
-                        alt={product.name}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                    </div>
+                
+                <div className="flex space-x-2">
+                  <Link 
+                    to={`/products/${product.id}`}
+                    className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm text-center flex items-center justify-center"
+                  >
+                    <Eye className="h-4 w-4 mr-2" />
+                    상세보기
                   </Link>
-                  
-                  <div className="flex-1 p-4">
-                    <div className="flex justify-between items-start mb-2">
-                      <div>
-                        <h3 className="font-semibold text-gray-900 text-lg mb-1">{product.name}</h3>
-                        <p className="text-sm text-gray-600 mb-2">{product.description}</p>
-                        <div className="flex items-center gap-4 text-sm text-gray-600">
-                          <span className="bg-gray-100 px-2 py-1 rounded">{product.brand}</span>
-                          <div className="flex items-center">
-                            <Star className="h-4 w-4 text-yellow-400 fill-current mr-1" />
-                            <span>{product.rating}</span>
-                          </div>
-                          <div className="flex items-center">
-                            <Heart className="h-4 w-4 text-red-400 mr-1" />
-                            <span>{product.likes}</span>
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <div className="text-right">
-                        <div className="flex flex-col items-end">
-                          <span className="text-xl font-bold text-blue-600">
-                            ₩{product.price.toLocaleString()}
-                          </span>
-                        </div>
-                        
-                        <div className="flex space-x-2 mt-3">
-                          <Link 
-                            to={`/products/${product.id}`}
-                            className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm flex items-center"
-                          >
-                            <Eye className="h-4 w-4 mr-2" />
-                            상세보기
-                          </Link>
-                          <button 
-                            onClick={(e) => {
-                              e.preventDefault()
-                              e.stopPropagation()
-                              handleLikeToggle(product.id)
-                            }}
-                            className={`p-2 rounded-lg transition-colors ${
-                              product.isLiked 
-                                ? 'bg-red-100 text-red-600 hover:bg-red-200' 
-                                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                            }`}
-                            title={product.isLiked ? '좋아요 취소' : '좋아요'}
-                          >
-                            <Heart className={`h-4 w-4 ${product.isLiked ? 'fill-current' : ''}`} />
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                  <button 
+                    onClick={(e) => {
+                      e.preventDefault()
+                      e.stopPropagation()
+                      handleLikeToggle(product.id)
+                    }}
+                    className={`p-2 rounded-lg transition-colors ${
+                      product.isLiked 
+                        ? 'bg-red-100 text-red-600 hover:bg-red-200' 
+                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                    }`}
+                    title={product.isLiked ? '좋아요 취소' : '좋아요'}
+                  >
+                    <Heart className={`h-4 w-4 ${product.isLiked ? 'fill-current' : ''}`} />
+                  </button>
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
+        </div>
+
+        {/* 정렬 옵션 - 우측 하단 */}
+        <div className="flex justify-end mt-6">
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">정렬:</span>
+            <select
+              value={sortBy}
+              onChange={(e) => handleSort(e.target.value)}
+              className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm"
+            >
+              {sortOptions.map(option => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
           </div>
-        )}
+        </div>
 
         {/* 페이지네이션 */}
-        {totalPages > 1 && (
-          <div className="flex justify-center items-center mt-12 gap-2">
+        <div className="flex justify-center items-center mt-12 gap-2">
             <button
               onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
               disabled={currentPage === 1}
@@ -779,7 +758,6 @@ function ProductsPage() {
               <ChevronRight className="h-4 w-4 ml-1" />
             </button>
           </div>
-        )}
 
         {filteredProducts.length === 0 && (
           <div className="text-center py-16">
