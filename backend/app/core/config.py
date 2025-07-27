@@ -1,8 +1,14 @@
 from pydantic_settings import BaseSettings
+from pydantic import ConfigDict
 from typing import Optional, List
 import os
 
 class Settings(BaseSettings):
+    model_config = ConfigDict(
+        env_file=".env",
+        case_sensitive=True,
+        extra="ignore"  # 정의되지 않은 환경변수 무시
+    )
     # API 설정
     API_V1_STR: str = "/api/v1"
     PROJECT_NAME: str = "Commerce Recommendation API"
@@ -64,9 +70,5 @@ class Settings(BaseSettings):
     
     # 로깅 설정
     LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
-    
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
 
 settings = Settings() 

@@ -192,7 +192,7 @@ function NativeChatbot({ className = "" }: NativeChatbotProps) {
 
       {/* 챗봇 패널 */}
       {isOpen && (
-        <div className="fixed bottom-20 right-6 w-96 h-[600px] bg-white rounded-lg shadow-xl border border-gray-200 z-40 flex flex-col">
+        <div className="fixed bottom-20 right-6 w-[576px] h-[900px] bg-white rounded-lg shadow-xl border border-gray-200 z-40 flex flex-col">
           {/* 헤더 */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50 rounded-t-lg">
             <div className="flex items-center">
