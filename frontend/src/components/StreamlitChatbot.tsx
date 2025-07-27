@@ -24,7 +24,7 @@ function StreamlitChatbot({
 
       {/* 챗봇 패널 */}
       {isOpen && (
-        <div className="fixed bottom-20 right-6 w-96 h-[600px] bg-white rounded-lg shadow-xl border border-gray-200 z-40">
+        <div className="fixed bottom-20 right-6 w-[576px] h-[900px] bg-white rounded-lg shadow-xl border border-gray-200 z-40">
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <h3 className="text-lg font-semibold text-gray-900">AI 어시스턴트</h3>
             <button
