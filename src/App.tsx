@@ -22,7 +22,7 @@ function App() {
           <Route path="/search" element={<SearchPage />} />
           
           {/* Product Detail */}
-          <Route path="/product/:id" element={<ProductDetailPage />} />
+          <Route path="/products/:id" element={<ProductDetailPage />} />
           
           {/* Legacy Routes - 기존 라우트들도 유지 */}
           <Route path="/products" element={<ProductsPage />} />

@@ -168,7 +168,7 @@ class ProductService:
                     "fields": [
                         "product_name^3",      # 상품명에 가중치 3
                         "brand^2",             # 브랜드에 가중치 2
-                        "description",         # 설명
+                        "description^1.5",     # 설명에 가중치 1.5
                         "category.category_name^2"  # 카테고리명에 가중치 2
                     ],
                     "type": "best_fields",

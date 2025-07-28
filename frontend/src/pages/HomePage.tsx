@@ -6,6 +6,7 @@ import { productService, Product as ApiProduct } from '../services/product'
 
 interface Product {
   id: string
+  product_no: string
   name: string
   price: number
   rating: number
@@ -43,6 +44,7 @@ function HomePage() {
         // API 응답을 로컬 Product 인터페이스로 변환
         const convertedProducts: Product[] = result.items.map((apiProduct: ApiProduct) => ({
           id: apiProduct.id,
+          product_no: apiProduct.product_no || apiProduct.id, // product_no가 없으면 id 사용
           name: apiProduct.name,
           price: apiProduct.price,
           rating: apiProduct.rating || 0,
@@ -76,6 +78,7 @@ function HomePage() {
         // API 응답을 로컬 Product 인터페이스로 변환
         const convertedProducts: Product[] = result.items.map((apiProduct: ApiProduct) => ({
           id: apiProduct.id,
+          product_no: apiProduct.product_no || apiProduct.id,
           name: apiProduct.name,
           price: apiProduct.price,
           rating: apiProduct.rating || 0,
@@ -181,7 +184,7 @@ function HomePage() {
   const ProductCard = ({ product }: { product: Product }) => {
     return (
       <div className="bg-white rounded-lg shadow-md overflow-hidden group hover:shadow-lg transition-shadow duration-300">
-        <Link to={`/products/${product.id}`}>
+        <Link to={`/products/${product.product_no}`}>
           <div className="relative aspect-square overflow-hidden">
             <img 
               src={product.image} 
@@ -222,7 +225,7 @@ function HomePage() {
           
           <div className="flex space-x-2 mt-auto">
             <Link 
-              to={`/products/${product.id}`}
+              to={`/products/${product.product_no}`}
               className="flex-1 bg-blue-600 text-white text-center py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 text-sm font-medium"
             >
               상품 보기
@@ -294,7 +297,7 @@ function HomePage() {
 
                     {currentProducts.length > 0 ? (
             <>
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-6">
+              <div className="grid grid-cols-5 gap-6">
                 {currentProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}

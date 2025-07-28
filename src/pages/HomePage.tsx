@@ -300,8 +300,8 @@ function HomePage() {
         </div>
 
         {loading ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {[1, 2, 3, 4].map(i => (
+          <div className="grid grid-cols-5 gap-6">
+            {[1, 2, 3, 4, 5].map(i => (
               <div key={i} className="animate-pulse">
                 <div className="bg-gray-300 aspect-square rounded-lg mb-4"></div>
                 <div className="bg-gray-300 h-4 rounded mb-2"></div>
@@ -310,7 +310,7 @@ function HomePage() {
             ))}
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-5 gap-6">
             {recommendedProducts.map(product => (
               <ProductCard key={product.id} product={product} />
             ))}
@@ -339,7 +339,7 @@ function HomePage() {
           </Link>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-5 gap-6">
           {trendingProducts.map(product => (
             <ProductCard key={product.id} product={product} showTrendingBadge />
           ))}
@@ -437,13 +437,13 @@ function ProductCard({
     e.preventDefault()
     e.stopPropagation()
     console.log('상세보기 버튼 클릭!', product.id, product.name)
-    window.location.href = `/product/${product.id}`
+    window.location.href = `/products/${product.id}`
   }
 
   return (
     <div className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer">
       <Link 
-        to={`/product/${product.id}`} 
+        to={`/products/${product.id}`} 
         className="block group"
         onClick={handleClick}
       >
