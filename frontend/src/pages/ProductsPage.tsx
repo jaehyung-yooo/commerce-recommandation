@@ -6,6 +6,7 @@ import { productService, Product as ApiProduct, ProductSearchParams, Category } 
 
 interface Product {
   id: string
+  product_no: string
   name: string
   price: number
   rating: number
@@ -83,11 +84,9 @@ function ProductsPage() {
         }
         
         // 선택된 카테고리의 ID 찾기
-        const selectedCategoryData = categories.find(cat => cat.category_name === selectedCategory)
-        
         const searchParams: ProductSearchParams = {
           query: query || undefined,
-          category_id: selectedCategory !== 'all' && selectedCategoryData ? selectedCategoryData.category_id : undefined,
+          category_id: selectedCategory !== 'all' ? parseInt(selectedCategory) : undefined,
           sort_by: sortByParam,
           sort_order: sortOrder
         }
@@ -100,6 +99,7 @@ function ProductsPage() {
         // API 응답을 로컬 Product 인터페이스로 변환
         const convertedProducts: Product[] = result.items.map((apiProduct: ApiProduct) => ({
             id: apiProduct.id,
+            product_no: apiProduct.product_no || apiProduct.id, // product_no가 없으면 id 사용
             name: apiProduct.name,
             price: apiProduct.price,
             rating: apiProduct.rating || 0,
@@ -193,10 +193,19 @@ function ProductsPage() {
 
   const categoryOptions = [
     { value: 'all', label: '전체 카테고리' },
-    ...categories.map(cat => ({
-      value: cat.category_name,
-      label: cat.category_name
-    }))
+    ...categories
+      .filter(cat => {
+        // 점퍼 카테고리는 category_id가 21인 것만 사용
+        if (cat.category_name === '점퍼') {
+          return cat.category_id === 21
+        }
+        return true
+      })
+      .map(cat => ({
+        value: cat.category_id.toString(),
+        label: cat.category_name,
+        category_id: cat.category_id
+      }))
   ]
 
   const sortOptions = [
@@ -300,7 +309,7 @@ function ProductsPage() {
         <div className="grid grid-cols-5 gap-6">
           {currentProducts.map(product => (
             <div key={product.id} className="bg-white rounded-lg shadow-sm overflow-hidden hover:shadow-lg transition-all duration-300 group">
-              <Link to={`/products/${product.id}`} className="block">
+              <Link to={`/products/${product.product_no}`} className="block">
                 <div className="aspect-square bg-gray-100 relative overflow-hidden">
                   <img 
                     src={product.image} 
@@ -341,7 +350,7 @@ function ProductsPage() {
                 
                 <div className="flex space-x-2 mt-auto">
                   <Link 
-                    to={`/products/${product.id}`}
+                    to={`/products/${product.product_no}`}
                     className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors font-medium text-sm text-center flex items-center justify-center"
                   >
                     <Eye className="h-4 w-4 mr-2" />

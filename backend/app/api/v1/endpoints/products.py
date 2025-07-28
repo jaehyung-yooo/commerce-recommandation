@@ -160,9 +160,9 @@ async def get_categories(
         logger.error(f"Failed to get categories: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@router.get("/{product_id}", response_model=Product)
+@router.get("/{product_no}", response_model=Product)
 async def get_product(
-    product_id: str,
+    product_no: str,
     db: Session = Depends(get_db),
     redis_client = Depends(get_redis_client),
     opensearch_client = Depends(get_opensearch_client)
@@ -172,18 +172,18 @@ async def get_product(
         product_service = ProductService(db, redis_client, opensearch_client)
         
         # 캐시에서 조회
-        cache_key = f"product:{product_id}"
+        cache_key = f"product:{product_no}"
         cached_product = redis_client.get(cache_key)
         if cached_product:
             return cached_product
         
         # 상품 조회
-        product = await product_service.get_product_by_id(product_id)
+        product = await product_service.get_product_by_id(product_no)
         if not product:
             raise HTTPException(status_code=404, detail="Product not found")
         
         # 조회수 증가
-        await product_service.increment_view_count(product_id)
+        await product_service.increment_view_count(product_no)
         
         # 캐시에 저장 (10분)
         redis_client.set(cache_key, product, ex=600)
@@ -193,7 +193,7 @@ async def get_product(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to get product {product_id}: {e}")
+        logger.error(f"Failed to get product {product_no}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/search", response_model=ProductList)
@@ -218,9 +218,9 @@ async def search_products(
         logger.error(f"Failed to search products: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
-@router.get("/similar/{product_id}", response_model=ProductList)
+@router.get("/similar/{product_no}", response_model=ProductList)
 async def get_similar_products(
-    product_id: str,
+    product_no: str,
     size: int = Query(10, ge=1, le=50, description="추천 상품 수"),
     db: Session = Depends(get_db),
     redis_client = Depends(get_redis_client),
@@ -231,12 +231,12 @@ async def get_similar_products(
         product_service = ProductService(db, redis_client, opensearch_client)
         
         # 유사 상품 검색 실행
-        result = await product_service.find_similar_products(product_id, size)
+        result = await product_service.find_similar_products(product_no, size)
         
         return result
         
     except Exception as e:
-        logger.error(f"Failed to get similar products for {product_id}: {e}")
+        logger.error(f"Failed to get similar products for {product_no}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error")
 
 @router.post("/recommend", response_model=ProductList)

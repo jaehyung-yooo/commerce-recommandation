@@ -5,9 +5,13 @@
 import asyncio
 from typing import List, Dict, Any, Optional
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 from loguru import logger
 from app.core.vertex_client import get_vertex_client
 from app.schemas.product import ProductList
+from app.schemas.review import ReviewList, ReviewSearchParams, Review
+from app.schemas.member import Member
+from app.services.member_service import MemberService
 from decimal import Decimal
 
 
@@ -19,6 +23,7 @@ class ReviewHybridSearchService:
         self.redis_client = redis_client
         self.opensearch_client = opensearch_client
         self.vertex_client = get_vertex_client()
+        self.member_service = MemberService(db)
     
     async def search_reviews_hybrid(
         self, 
@@ -49,9 +54,31 @@ class ReviewHybridSearchService:
             # 4. 최종 결과 정렬 및 반환
             final_results = self._rank_final_results(hybrid_results, size)
             
+            # member 정보 조회
+            member_nos = []
+            for result in final_results:
+                member_no = result.get("member_no")
+                if member_no:
+                    member_nos.append(member_no)
+            
+            members_dict = {}
+            if member_nos:
+                members_dict = self.member_service.get_members_batch(member_nos)
+            
+            # Review 스키마로 변환
+            reviews = []
+            for result in final_results:
+                try:
+                    review = self._convert_to_review_schema(result, members_dict)
+                    if review:
+                        reviews.append(review)
+                except Exception as e:
+                    logger.warning(f"Failed to convert review result: {e}")
+                    continue
+            
             return {
-                "reviews": final_results,
-                "total": len(final_results),
+                "reviews": reviews,
+                "total": len(reviews),
                 "page": page,
                 "size": size,
                 "search_method": "hybrid",
@@ -335,4 +362,158 @@ class ReviewHybridSearchService:
             
         except Exception as e:
             logger.error(f"Product lookup failed: {e}")
-            return None 
+            return None
+
+    async def get_product_reviews(
+        self, 
+        product_no: str,
+        page: int = 1, 
+        size: int = 20
+    ) -> ReviewList:
+        """특정 상품의 리뷰 목록 조회 (생성일 내림차순)"""
+        try:
+            # product_no를 정수로 변환
+            try:
+                product_no_int = int(product_no)
+            except ValueError:
+                logger.error(f"Invalid product_no: {product_no}")
+                return ReviewList(items=[], total=0, page=page, size=size, total_pages=0)
+            
+            logger.info(f"Searching reviews for product_no: {product_no_int}")
+            
+            # SQL 쿼리 구성
+            base_query = text("""
+            SELECT 
+                r.review_id,
+                r.product_no,
+                r.member_no,
+                r.rating,
+                r.review_text,
+                r.review_date,
+                r.helpful_count,
+                r.created_at,
+                r.updated_at,
+                m.member_id as member_id
+            FROM reviews r
+            LEFT JOIN members m ON r.member_no = m.member_no
+            WHERE r.product_no = :product_no
+            ORDER BY r.created_at DESC
+            LIMIT :limit OFFSET :offset
+            """)
+            
+            count_query = text("""
+            SELECT COUNT(*) as total
+            FROM reviews r
+            WHERE r.product_no = :product_no
+            """)
+            
+            # 전체 개수 조회
+            cursor = self.db.execute(count_query, {"product_no": product_no_int})
+            total_result = cursor.fetchone()
+            total = total_result.total if total_result else 0
+            
+            logger.info(f"Total reviews found for product {product_no_int}: {total}")
+            
+            # 리뷰 데이터 조회
+            offset = (page - 1) * size
+            cursor = self.db.execute(base_query, {
+                "product_no": product_no_int, 
+                "limit": size, 
+                "offset": offset
+            })
+            results = cursor.fetchall()
+            
+            logger.info(f"SQL query returned {len(results)} results")
+            
+            # Review 스키마로 변환
+            reviews = []
+            for result in results:
+                try:
+                    review = self._convert_sql_to_review_schema(result)
+                    if review:
+                        reviews.append(review)
+                except Exception as e:
+                    logger.warning(f"Failed to convert review result: {e}")
+                    continue
+            
+            pages = (total + size - 1) // size if total > 0 else 0
+            
+            logger.info(f"Review search completed: {len(reviews)} reviews found, total: {total}")
+            
+            return ReviewList(
+                items=reviews,
+                total=total,
+                page=page,
+                size=size,
+                total_pages=pages
+            )
+            
+        except Exception as e:
+            logger.error(f"Error in review search: {e}")
+            return ReviewList(items=[], total=0, page=page, size=size, total_pages=0)
+
+    def _convert_sql_to_review_schema(self, sql_result) -> Optional[Review]:
+        """SQL 결과를 Review 스키마로 변환"""
+        try:
+            # member 정보 생성
+            member = None
+            if sql_result.member_no:
+                member = Member(
+                    member_id=str(sql_result.member_id) if sql_result.member_id else str(sql_result.member_no),
+                    name=sql_result.member_id or f"회원{sql_result.member_no}",
+                    email=None  # members 테이블에 email 컬럼 없음
+                )
+
+            return Review(
+                id=str(sql_result.review_id),
+                content=sql_result.review_text or "",
+                rating=float(sql_result.rating),
+                product_no=str(sql_result.product_no),
+                member_id=str(sql_result.member_no) if sql_result.member_no else None,
+                member=member,
+                created_at=sql_result.created_at.isoformat() if sql_result.created_at else "2025-01-01T00:00:00",
+                updated_at=sql_result.updated_at.isoformat() if sql_result.updated_at else None,
+                helpful_count=int(sql_result.helpful_count or 0),
+                sentiment_score=None  # SQL에서는 감정 점수 없음
+            )
+
+        except Exception as e:
+            logger.error(f"Error converting SQL result to Review: {e}")
+            logger.error(f"Result data: {sql_result}")
+            return None
+
+    def _convert_to_review_schema(self, opensearch_result: Dict[str, Any], members_dict: Dict[int, Member] = None) -> Optional[Review]:
+        """OpenSearch 결과를 Review 스키마로 변환"""
+        try:
+            source = opensearch_result
+            
+            # member_no 추출 (OpenSearch에는 member_no로 저장됨)
+            member_no = source.get("member_no")
+            
+            # member 정보 조회
+            member = None
+            if member_no and members_dict and member_no in members_dict:
+                member = members_dict[member_no]
+            elif member_no:
+                # 개별 조회 (fallback)
+                member = self.member_service.get_member_by_no(member_no)
+
+            return Review(
+                id=str(source.get("review_id", "")),
+                content=source.get("review_text", ""),
+                rating=float(source.get("rating", 0)),
+                product_no=str(source.get("product_no", "")),
+                member_id=str(member_no) if member_no else None,
+                member=member,
+                created_at=source.get("created_at", "2025-01-01T00:00:00"),
+                updated_at=source.get("updated_at"),
+                helpful_count=int(source.get("helpful_count", 0)),
+                sentiment_score=source.get("sentiment_score")
+            )
+
+        except Exception as e:
+            logger.error(f"Error converting OpenSearch result to Review: {e}")
+            logger.error(f"Result data: {opensearch_result}")
+            return None
+
+ 

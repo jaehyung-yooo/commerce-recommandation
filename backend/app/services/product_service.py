@@ -34,9 +34,43 @@ class ProductService:
 
     async def get_product_by_id(self, product_no: str) -> Optional[Product]:
         """상품 상세 조회"""
-        # 기본 구현: None 반환
-        logger.info(f"Getting product by product_no: {product_no}")
-        return None
+        try:
+            if not self.opensearch_client:
+                logger.warning("OpenSearch client not available")
+                return None
+
+            # OpenSearch에서 상품 조회
+            query = {
+                "query": {
+                    "term": {
+                        "product_no": product_no
+                    }
+                },
+                "size": 1
+            }
+            
+            logger.info(f"Searching for product with product_no: {product_no}")
+            
+            # OpenSearch에서 검색 실행
+            search_results = self.opensearch_client.search("products", query)
+            
+            if not search_results:
+                logger.warning(f"Product not found: {product_no}")
+                return None
+                
+            # 첫 번째 결과를 Product 스키마로 변환
+            product = self._convert_to_product_schema(search_results[0])
+            
+            if product:
+                logger.info(f"Successfully retrieved product: {product_no}")
+            else:
+                logger.warning(f"Failed to convert product data: {product_no}")
+                
+            return product
+            
+        except Exception as e:
+            logger.error(f"Error getting product {product_no}: {e}")
+            return None
 
     async def create_product(self, product: ProductCreate) -> Product:
         """상품 생성"""

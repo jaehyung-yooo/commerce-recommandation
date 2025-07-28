@@ -2,6 +2,7 @@ const API_BASE_URL = 'http://localhost:8000/api/v1';
 
 export interface Product {
   id: string;
+  product_no: string;
   name: string;
   price: number;
   rating?: number;
@@ -130,8 +131,8 @@ class ProductService {
     return await response.json();
   }
 
-  async getProductById(productId: string): Promise<Product> {
-    const response = await fetch(`${API_BASE_URL}/products/${productId}`, {
+  async getProductById(productNo: string): Promise<Product> {
+    const response = await fetch(`${API_BASE_URL}/products/${productNo}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -146,8 +147,8 @@ class ProductService {
     return await response.json();
   }
 
-  async getSimilarProducts(productId: string, size: number = 10): Promise<ProductList> {
-    const response = await fetch(`${API_BASE_URL}/products/similar/${productId}?size=${size}`, {
+  async getSimilarProducts(productNo: string, size: number = 10): Promise<ProductList> {
+    const response = await fetch(`${API_BASE_URL}/products/similar/${productNo}?size=${size}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

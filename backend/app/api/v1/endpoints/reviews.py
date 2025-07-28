@@ -2,6 +2,7 @@
 리뷰 하이브리드 검색 API 엔드포인트
 """
 
+import json
 from fastapi import APIRouter, Depends, HTTPException, Query, Body
 from sqlalchemy.orm import Session
 from typing import Dict, Any
@@ -10,9 +11,54 @@ from app.core.redis_client import get_redis_client
 from app.core.opensearch_client import get_opensearch_client
 from app.services.review_service import ReviewHybridSearchService
 from app.schemas.product import ProductList
+from app.schemas.review import ReviewList, ReviewSearchParams
 from loguru import logger
 
 router = APIRouter()
+
+
+@router.get("/products/{product_no}/reviews", response_model=ReviewList)
+async def get_product_reviews(
+    product_no: str,
+    page: int = Query(1, ge=1, description="페이지 번호"),
+    db: Session = Depends(get_db),
+    redis_client = Depends(get_redis_client),
+    opensearch_client = Depends(get_opensearch_client)
+):
+    """특정 상품의 리뷰 목록 조회 (생성일 내림차순)"""
+    try:
+        review_service = ReviewHybridSearchService(db, redis_client, opensearch_client)
+        
+        # 캐시 키 생성
+        cache_key = f"reviews:product:{product_no}:page:{page}"
+        
+        # 캐시에서 조회
+        cached_result = redis_client.get(cache_key)
+        if cached_result:
+            try:
+                cached_data = json.loads(cached_result)
+                return ReviewList(**cached_data)
+            except Exception as e:
+                logger.warning(f"Failed to parse cached result: {e}")
+        
+        # 리뷰 조회 (size는 20으로 고정)
+        result = await review_service.get_product_reviews(
+            product_no=product_no,
+            page=page,
+            size=20
+        )
+        
+        # 캐시에 저장 (5분) - JSON으로 직렬화
+        try:
+            redis_client.set(cache_key, json.dumps(result.dict()), ex=300)
+        except Exception as e:
+            logger.warning(f"Failed to cache result: {e}")
+        
+        return result
+        
+    except Exception as e:
+        logger.error(f"Failed to get reviews for product {product_no}: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error")
 
 
 @router.post("/search-hybrid", response_model=Dict[str, Any])
@@ -126,4 +172,42 @@ async def get_review_stats(
         
     except Exception as e:
         logger.error(f"Failed to get review stats: {e}")
+        raise HTTPException(status_code=500, detail="Internal server error") 
+
+
+@router.get("/products/{product_no}/reviews/summary", response_model=Dict[str, Any])
+async def get_product_reviews_summary(
+    product_no: str,
+    db: Session = Depends(get_db),
+    redis_client = Depends(get_redis_client),
+    opensearch_client = Depends(get_opensearch_client)
+):
+    """특정 상품의 리뷰 요약 정보 조회"""
+    try:
+        review_service = ReviewHybridSearchService(db, redis_client, opensearch_client)
+        
+        # 캐시 키 생성
+        cache_key = f"reviews:summary:product:{product_no}"
+        
+        # 캐시에서 조회
+        cached_result = redis_client.get(cache_key)
+        if cached_result:
+            try:
+                return json.loads(cached_result)
+            except Exception as e:
+                logger.warning(f"Failed to parse cached summary: {e}")
+        
+        # 리뷰 요약 조회
+        summary = await review_service.get_product_reviews_summary(product_no)
+        
+        # 캐시에 저장 (10분)
+        try:
+            redis_client.set(cache_key, json.dumps(summary), ex=600)
+        except Exception as e:
+            logger.warning(f"Failed to cache summary: {e}")
+        
+        return summary
+        
+    except Exception as e:
+        logger.error(f"Failed to get reviews summary for product {product_no}: {e}")
         raise HTTPException(status_code=500, detail="Internal server error") 
