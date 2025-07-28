@@ -87,19 +87,27 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - MYSQL_HOST=mysql
       - MYSQL_SERVER=mysql
       - MYSQL_USER=commerce_user
       - MYSQL_PASSWORD=commerce_password
+      - MYSQL_DATABASE=commerce_recommendation
       - MYSQL_DB=commerce_recommendation
       - MYSQL_PORT=3306
       - OPENSEARCH_HOST=opensearch
       - OPENSEARCH_PORT=9200
       - OPENSEARCH_USERNAME=admin
       - OPENSEARCH_PASSWORD=admin
+      - OPENSEARCH_USE_SSL=false
+      - OPENSEARCH_VERIFY_CERTS=false
       - REDIS_HOST=redis
       - REDIS_PORT=6379
       - RECOMMENDATION_ENGINE_HOST=recommendation-engine
       - RECOMMENDATION_ENGINE_PORT=8001
+      - GOOGLE_CLOUD_PROJECT_ID=commerce-recommand
+      - GOOGLE_CLOUD_LOCATION=us-central1
+      - VERTEX_EMBEDDING_MODEL=text-multilingual-embedding-002
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/config/vertex_key.json
       - ENVIRONMENT=production
     depends_on:
       - mysql
@@ -109,6 +117,7 @@ services:
       - commerce-network
     volumes:
       - ./backend:/app
+      - ./config:/app/config
     command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 
   # Recommendation Engine 서비스

@@ -295,8 +295,12 @@ class ReviewsMigration:
         return True
 
 def main():
+    import sys
     migration = ReviewsMigration()
-    success = migration.run()
+    
+    # 명령행 인수 처리
+    input_file = sys.argv[1] if len(sys.argv) > 1 else None
+    success = migration.run(input_file)
     return success
 
 if __name__ == "__main__":

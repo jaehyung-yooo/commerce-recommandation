@@ -216,6 +216,19 @@ class ProductsMigration:
             description = self.clean_text(row.get('description', ''))
             image_url = str(row.get('image_url', ''))[:1000] if 'image_url' in row else None
             
+            # 평점 및 리뷰 정보
+            rating = float(row.get('rating', 0)) if row.get('rating') and not pd.isna(row.get('rating')) else None
+            
+            # review_count 처리 (숫자가 아닌 값 처리)
+            review_count_raw = row.get('review_count', 0)
+            if review_count_raw and not pd.isna(review_count_raw):
+                try:
+                    review_count = int(str(review_count_raw).replace('+', ''))
+                except ValueError:
+                    review_count = 0
+            else:
+                review_count = 0
+            
             self.product_data.append({
                 'product_no': product_no,
                 'product_id': product_id,
@@ -224,7 +237,9 @@ class ProductsMigration:
                 'brand': brand,
                 'price': price,
                 'description': description if description else None,
-                'image_url': image_url if image_url else None
+                'image_url': image_url if image_url else None,
+                'rating': rating,
+                'review_count': review_count
             })
             
             processed_count += 1
@@ -335,8 +350,12 @@ class ProductsMigration:
         return True
 
 def main():
+    import sys
     migration = ProductsMigration()
-    success = migration.run()
+    
+    # 명령행 인수 처리
+    input_file = sys.argv[1] if len(sys.argv) > 1 else None
+    success = migration.run(input_file)
     return success
 
 if __name__ == "__main__":

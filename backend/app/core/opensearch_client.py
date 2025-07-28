@@ -176,16 +176,26 @@ class OpenSearchClient:
             
             actions = []
             for doc in documents:
-                doc_id = doc.pop('_id', None)
-                action = {
-                    "_index": index_name,
-                    "_source": doc
-                }
+                # 문서에서 _id 추출
+                doc_copy = doc.copy()
+                doc_id = doc_copy.pop('_id', None)
+                
+                # action 헤더
+                action_header = {"index": {"_index": index_name}}
                 if doc_id:
-                    action["_id"] = doc_id
-                actions.append(action)
+                    action_header["index"]["_id"] = doc_id
+                
+                actions.append(action_header)
+                actions.append(doc_copy)
             
             response = self.client.bulk(body=actions, refresh=True)
+            
+            # 에러 로깅 추가
+            if response.get('errors', False):
+                for item in response.get('items', []):
+                    if 'index' in item and 'error' in item['index']:
+                        logger.error(f"Bulk index error: {item['index']['error']}")
+            
             return not response.get('errors', False)
         except Exception as e:
             logger.error(f"Failed to bulk index documents in {index_name}: {e}")

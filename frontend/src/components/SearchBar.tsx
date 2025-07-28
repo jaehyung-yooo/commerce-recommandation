@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom'
 interface SearchBarProps {
   placeholder?: string
   className?: string
+  value?: string
   onSearch?: (query: string) => void
 }
 
@@ -17,9 +18,10 @@ interface SearchSuggestion {
 function SearchBar({ 
   placeholder = "상품, 브랜드를 검색해보세요", 
   className = "",
+  value = "",
   onSearch 
 }: SearchBarProps) {
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(value)
   const [suggestions, setSuggestions] = useState<SearchSuggestion[]>([])
   const [showSuggestions, setShowSuggestions] = useState(false)
   const [selectedIndex, setSelectedIndex] = useState(-1)
@@ -38,6 +40,10 @@ function SearchBar({
     { id: '7', text: '스마트폰', type: 'keyword' },
     { id: '8', text: '노트북', type: 'keyword' },
   ]
+
+  useEffect(() => {
+    setQuery(value)
+  }, [value])
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
